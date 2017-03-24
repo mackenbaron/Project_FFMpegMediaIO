@@ -30,7 +30,6 @@ bool clsDemuxer::init(const char* _fileName)
     } catch(std::invalid_argument e) {
     }
 
-//    this->fileName = "/home/esoroush/Videos/gladiator1.mp4";
     /* open input file, and allocate format context */
 
     if (avformat_open_input(&this->pAvFormatContext, this->fileName.c_str(), inputFormat, 0) < 0) {
@@ -47,11 +46,12 @@ bool clsDemuxer::init(const char* _fileName)
 
 }
 
-int clsDemuxer::getNextAvPacketFrame(AVPacket &_avPacket)
+bool clsDemuxer::getNextAvPacketFrame(AVPacket &_avPacket)
 {
     int ret = av_read_frame(this->pAvFormatContext, &this->avPacket);
     _avPacket = this->avPacket;
-    return ret;
+    bool success = ret == 0 ? true : false;
+    return success;
 }
 
 int clsDemuxer::getVideoStreamNumber()

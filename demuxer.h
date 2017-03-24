@@ -11,7 +11,7 @@ public:
     clsDemuxer();
     ~clsDemuxer();
     bool init(const char* _fileName);
-    int getNextAvPacketFrame(AVPacket &_avPacket);
+    bool getNextAvPacketFrame(AVPacket &_avPacket);
     std::string getFileName() const {return this->fileName;}
     AVFormatContext *getAvFormatContext() const {return this->pAvFormatContext;}
     void dumpFormatContext() {av_dump_format(this->pAvFormatContext, 0, this->fileName.c_str(), 0);}
