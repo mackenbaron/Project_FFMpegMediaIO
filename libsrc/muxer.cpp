@@ -151,6 +151,8 @@ void Muxer::writeFrame(AVPacket &_packet)
 
 void Muxer::close()
 {
+    if(this->isInitialized == false)
+        return;
     av_write_trailer(this->pOutputAvFormatContext);
     if ((this->pAvOutputFormat->flags & AVFMT_NOFILE) == false)
         /* Close the output file. */
