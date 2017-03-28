@@ -33,6 +33,7 @@ static AVFrame * icv_alloc_picture_FFMPEG(int pix_fmt, int width, int height, bo
 
 clsAvMediaDecoder::clsAvMediaDecoder()
 {
+    avcodec_register_all();
 }
 
 clsAvMediaDecoder::~clsAvMediaDecoder()
@@ -48,7 +49,7 @@ clsAvMediaDecoder::~clsAvMediaDecoder()
 #define COLOR_PIXEL_FORMAT AV_PIX_FMT_RGB24
 bool clsAvMediaDecoder::init(AVFormatContext *_pAvFormatContext, int _videoStreamIndex)
 {
-    avcodec_register_all();
+
     // \TODO Right now it doesn't handle multiple streams of even video
     if(_videoStreamIndex == -1)
         if (openCodecContext(&this->videoStreamIndex, _pAvFormatContext, AVMEDIA_TYPE_VIDEO) >= 0) {
@@ -118,6 +119,23 @@ bool clsAvMediaDecoder::init(uint _width, uint _height, AVCodecID _codecId)
     this->yuvFrame = icv_alloc_picture_FFMPEG(this->pixelFormat, this->pAvVideoCodecContext->width, this->pAvVideoCodecContext->height, true);
     this->rgbFrame = icv_alloc_picture_FFMPEG(COLOR_PIXEL_FORMAT, this->pAvVideoCodecContext->width, this->pAvVideoCodecContext->height, true);
 
+}
+
+bool clsAvMediaDecoder::reinit(AVFormatContext* _pAvFormatContext)
+{
+//    avcodec_close(this->pAvVideoCodecContext);
+    if(this->rgbFrame != NULL)
+        av_frame_free(&this->rgbFrame);
+    if(this->yuvFrame != NULL)
+        av_frame_free(&this->yuvFrame);
+    if(this->convertRgbYuvcontext != NULL)
+        sws_freeContext(this->convertRgbYuvcontext);
+    pAvVideoCodecContext = NULL;
+    pAvAudioCodecContext = NULL;
+    yuvFrame = NULL;
+    rgbFrame = NULL;
+    convertRgbYuvcontext = NULL;
+    return init(_pAvFormatContext);
 }
 
 

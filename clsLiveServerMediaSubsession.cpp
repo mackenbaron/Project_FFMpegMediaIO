@@ -41,25 +41,12 @@ void clsLiveServerMediaSubsession::afterPlayingDummy1()
     this->setDoneFlag();
 }
 
-void clsLiveServerMediaSubsession::setDataFrameProvider(clsDemuxer *_demuxer, clsX264Encoder *_x264Encoder, clsAvMediaDecoder *_avMediaDecoder)
-{
-    this->dataFrameProvider->demuxer         = _demuxer;
-    this->dataFrameProvider->x264Encoder     = _x264Encoder;
-    this->dataFrameProvider->avMediaDecoder  = _avMediaDecoder;
-}
-
-void clsLiveServerMediaSubsession::setDataFrameProvider(cv::VideoCapture *_videoCapture, clsX264Encoder *_x264Encoder)
-{
-    this->dataFrameProvider->videoCapture    = _videoCapture;
-    this->dataFrameProvider->x264Encoder     = _x264Encoder;
-}
 
 clsLiveServerMediaSubsession::clsLiveServerMediaSubsession(UsageEnvironment &_usageEnvironment, bool _reuseFirstSource) :
     OnDemandServerMediaSubsession(_usageEnvironment, _reuseFirstSource),
     fAuxSDPLine(NULL),
     fDoneFlag(0),
-    fDummySink(NULL),
-    dataFrameProvider(new stuDataFrameProvider)
+    fDummySink(NULL)
 {
 
 }
@@ -91,7 +78,7 @@ FramedSource *clsLiveServerMediaSubsession::createNewStreamSource(unsigned _clie
     // are you trying to keep the reference of the source somewhere? you shouldn't.
     // Live555 will create and delete this class object many times. if you store it somewhere
     // you will get memory access violation. instead you should configure you source to always read from your data source
-    source->setDataFrameProvider(this->dataFrameProvider);
+    std::cout << "clsLiveServerMediaSubsession::create" << std::endl;
     return H264VideoStreamDiscreteFramer::createNew(envir(), source);
 }
 

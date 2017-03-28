@@ -10,6 +10,7 @@ public:
     ~clsAvMediaDecoder();
     bool init(AVFormatContext *_pAvFormatContext, int _videoStreamIndex = -1);
     bool init(uint _width, uint _height, enum AVCodecID _codecId);
+    bool reinit(AVFormatContext *_pAvFormatContext);
     bool decodeFrame(AVPacket _avPacket, unsigned char *_decodedFrameData);
     uint get(int propID);
     private:
@@ -23,7 +24,6 @@ private:
     AVCodecContext *pAvAudioCodecContext = NULL;
     AVFrame *yuvFrame = NULL;
     AVFrame *rgbFrame = NULL;
-    uint frameNumber;
     int rgbSize;
     SwsContext* convertRgbYuvcontext = NULL;
 

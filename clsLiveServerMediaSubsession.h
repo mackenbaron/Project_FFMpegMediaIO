@@ -11,8 +11,6 @@ public:
     static clsLiveServerMediaSubsession* createNew(UsageEnvironment& _usageEnvironment, bool reuseFirstSource);
     void checkForAuxSdpLine1();
     void afterPlayingDummy1();
-    void setDataFrameProvider(clsDemuxer *_demuxer, clsX264Encoder *_x264Encoder = NULL, clsAvMediaDecoder *_avMediaDecoder = NULL);
-    void setDataFrameProvider(cv::VideoCapture* _videoCapture, clsX264Encoder* _x264Encoder);
 
 private:
     clsLiveServerMediaSubsession(UsageEnvironment& _usageEnvironment, bool _reuseFirstSource);
@@ -25,7 +23,6 @@ private:
     char* fAuxSDPLine;
     char fDoneFlag;
     RTPSink* fDummySink;
-    stuDataFrameProvider *dataFrameProvider;
 };
 
 #endif // CLSLIVESERVERMEDIASUBSESSION_H

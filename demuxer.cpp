@@ -4,7 +4,8 @@
 clsDemuxer::clsDemuxer() :
     pAvFormatContext(NULL)
 {
-
+    avcodec_register_all();
+    av_register_all();
 }
 
 clsDemuxer::~clsDemuxer()
@@ -29,29 +30,46 @@ bool clsDemuxer::init(const char* _fileName)
         inputFormat = av_find_input_format("v4l2");
     } catch(std::invalid_argument e) {
     }
-
+    AVDictionary *dict = NULL;
+    if(this->fileName.find("rtsp") == 0)
+        av_dict_set(&dict, "rtsp_transport", "tcp", 0);
+//    this->fileName = "/home/esoroush/Videos/gladiator1.mp4";
     /* open input file, and allocate format context */
 
-    if (avformat_open_input(&this->pAvFormatContext, this->fileName.c_str(), inputFormat, 0) < 0) {
+    if (avformat_open_input(&this->pAvFormatContext, this->fileName.c_str(), inputFormat, &dict) < 0) {
         std::cerr << "Could not open source file " << this->fileName.c_str() << std::endl;
         return false;
     }
+//    this->pAvFormatContext->streams[0]->codec->width = 640;
+//    this->pAvFormatContext->streams[0]->codec->width = 480;
     if (avformat_find_stream_info(this->pAvFormatContext, 0) < 0) {
         fprintf(stderr, "Could not find stream information\n");
         return false;
     }
     /* dump input information to stderr */
     av_dump_format(this->pAvFormatContext, 0, _fileName, 0);
+    initialized = true;
     return true;
 
 }
 
+bool clsDemuxer::reinit()
+{
+    avformat_close_input(&this->pAvFormatContext);
+    this->pAvFormatContext = NULL;
+    return init(this->fileName.c_str());
+}
+
 bool clsDemuxer::getNextAvPacketFrame(AVPacket &_avPacket)
 {
+    if(this->initialized == false)
+        return false;
     int ret = av_read_frame(this->pAvFormatContext, &this->avPacket);
     _avPacket = this->avPacket;
-    bool success = ret == 0 ? true : false;
-    return success;
+    if(ret == 0)
+        return true;
+    else
+        return false;
 }
 
 int clsDemuxer::getVideoStreamNumber()
